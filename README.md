@@ -75,6 +75,7 @@ Moreover, we adjusted the score to account for products which simply had more re
 
 
 
+
 #### Necessary Python Packages ####
 1. cPickle
 2. Flask - just for webapp
