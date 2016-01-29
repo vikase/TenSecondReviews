@@ -54,7 +54,25 @@ Other scoring methods to find collocations include Dice's coefficient and the li
 
 NLTK has an implementation of collocations which was used for this project.
 
+####Collocations in this Amazon camera dataset
+
+The features extracted with this method included [low light; memory card; picture quality; battery life; image quality; highly recommend; wide angle; shutter speed; takes great; optical zoom; great pictures; lcd screen; image stabilization; digital camera; touch screen; much better; would recommend; year old].  
+
+Not all of these features that we would like to actually rank our products upon.  Certainly not on "highly recommend" or "much better".  Initially the process to eliminate these, for the purposes of this proof of concept, was manual.
+
 #### Creating Sentiment Scores For Each Feature per Product
+
+Having collected the relevant features for a particular product.  The next step was to assign a score for each of the features per product.  For this we constructed a scoring set based on Bing Liu's Opinion Lexicon 
+(https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html).  This is a lexicon that consists of about 6800 positive and negative words that have been compiled over many years.
+
+We then collected every sentence fragment that contained a feature and scored the feature +1 for positive modifiers in that fragment, and -1 for negative modifiers present in that fragment.  Each phrase could only increment the sentiment score by +1, even if there were multiple positive modifiers in the phrase.  This was done to prevent overly enthusiastic reviewers from skewing the results.
+
+This is admittedly a brute force technique.  There will be instances where within the sentence fragment, the aspect will be mentioned and the sentiment word that is in the same phrase is not modifying the aspect we are measuring but some other aspect.  However, based on how we are creating sentence fragments, this is an inexpensive method to get approximate results.
+
+Moreover, we adjusted the score to account for products which simply had more reviews (and therefore if there was a bias found in reviewers across reviewers ie. reviewers tend to be leave positive reviews when they leave reviews) 
+
+#### Conclusions and Results
+
 
 
 #### Necessary Python Packages ####
