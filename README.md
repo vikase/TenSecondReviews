@@ -24,7 +24,7 @@ Jure Leskovec and Andrej Krevl host an Amazon dataset that spans a period of 18 
 
 For the purposes of this project, I limited myself to electronic product reviews.  
 
-Each category (Cameras, laptops, phones, etc.) has a collection of json files that each represent a particular product, all the reviews associated with that product, and other metadata related to the product.
+Each category (cameras, laptops, phones, etc.) has a collection of json files that each represent a particular product, all the reviews associated with that product, and other metadata related to the product.
 
 #### Repetition Detection
 Once the pushup duration window is calculated, Workout Buddy uses peak detection algorithms, on the unfiltered pitch data, to pick out the press-down and push-up times for each repetition in the set. The maximum press-down amplitude and the repetition duration are extracted for classifying the pushup form. In addition, the entire pitch and y-acceleration repetition time series are used during the classification process (See process_data.py and detect_peaks.py for more details).
