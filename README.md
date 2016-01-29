@@ -19,25 +19,43 @@ Was it possible to extract the attribute (remote control, battery life) and also
 And if it was possible, could I then quickly compare that product's attributes with other products in it's category?
 
 
+
 #### Data
 Jure Leskovec and Andrej Krevl host an Amazon dataset that spans a period of 18 years up to March 2013 as part of the Stanford Large Dataset Collection.  It can be found here: https://snap.stanford.edu/data/web-Amazon.html
 
 For the purposes of this project, I limited myself to electronic product reviews.  
 
-Each category (cameras, laptops, phones, etc.) has a collection of json files that each represent a particular product, all the reviews associated with that product, and other metadata related to the product.
+Each category (cameras, laptops, phones, etc.) has a collection of json files, and each json represents a particular product; it contains all the reviews associated with that product, and other metadata related to the product.
 
-#### Repetition Detection
-Once the pushup duration window is calculated, Workout Buddy uses peak detection algorithms, on the unfiltered pitch data, to pick out the press-down and push-up times for each repetition in the set. The maximum press-down amplitude and the repetition duration are extracted for classifying the pushup form. In addition, the entire pitch and y-acceleration repetition time series are used during the classification process (See process_data.py and detect_peaks.py for more details).
+Looking at the camera category specifically, there were initially 3007 unique products.  This was refined down to 1108 products which had more than 100 reviews each for a total of 322,035 camera reviews analyzed (an average of 300 reviews per product.
 
-#### Exercise Classification and Rating
-Workout Buddy uses an ensemble of classifiers to provide detailed ratings of your latest workout. It uses Random Forest and Support Vector Machine classifiers to model the amplitude and repetition duration features. Dynamic Time Warping, a method of calculating the distance between time series, is used in combination with K-Nearest Neighbors to classify the repetition time series. Each of the models provides a probability that the pushup repetition is either 'ok' or 'good'. The ensemble of models are combined, with equal weights. Workout Buddy uses the binary classification, along with the probabilities, to provide detailed ratings of your set of pushup repetitions (see classify.py and dtw.py for more details).
+#### Overview
+The main steps were organizing the data, extracting the relevant features, and then creating sentiment scores for each of the features per product.
 
-#### Interactive Visualizations
-Workout Buddy provides several interactive visualizations of your latest workout, and your workout history, on the webapp dashboard. Plotly is used to make the interactive plots (see plotly_graphs.py for more details). There are two visualizations of your latest set of repetitions. The first visualization plots the pitch time series for each repetition, so you can see the variability in your set. An optimal pushup repetition is also plotted, so you can see how close you are to performing an expert pushup. The next visualization is a bar chart of your latest set of repetitions, plotted sequentially. The size of the bar corresponds to the rating of the repetition, with 0% being poor and 100% being excellent form. The rating is the probability of your repetition being 'good' from the ensemble classification model. The bar is colored according to the binary classification of 'ok' (colored red) or 'good' (colored green). The last visualization is a stacked bar chart of your past 30 days of activity, showing the number of 'ok' and 'good' repetitions.
+#### Organizing the Data
+I transformed the data into a pandas dataframe (one review per row), which I then filtered to preserve only products which contained at least 100 reviews.  This was not strictly necessary (as will be seen in the "creating sentiment scores" section), however it has the benefit of increasing the probability that every camera has at least one aspect mentioned. 
 
-==============
-#### Implementation Details ####
-The code, and the data to train your own classifiers, is provided and can be run with the script training_pipeline.py. You can also use the provided models to classify your own data with the script user_prediction_pipeline.py (for data with user info) or anon_prediction_pipeline (for anonymous sensor data). Run setup.py first to set up the necessary directory structure.
+#### Extracting the Features
+There are multiple methodologies to extracting features/aspects in NLP literature.  Some of these involve finding highly frequent phrases across the reviews and filtering by rules such as "occurs right after sentiment word."  An example of this for a Mexican restaurant's reviews might be "(great) fish tacos". 
+
+Another method is to hand label sentences or phrases with the features you are interested in.  Again going back to the restaraunt example, this would entail hand labeling certain phrases with tags like ('food', 'decor', 'service', 'value).  The next step would be to train a classifier to assign aspects to a sentence. 
+
+#### Collocations 
+The method adopted either here involves finding collocations.  A collocation is an expression consisting of two or more words that correspond to some conventional way of saying things.  Another way of saying this is collocations are common expressions (often idioms) found within a specific language context.  Some examples from the corpus of everyday speech might include ('regular exercise', 'utterly stupid', 'ran out of money', 'whispered softly').  Collocations are characterized by limited compositionally, which means the meaning of the expression can only partially be predicated from the meaning of its parts. ie. 'strong tea' does not mean a tea having great physical strength, but rather a rich tea.  There is an element of added meaning in a collocation.  
+
+There are several approaches to approaches to finding collocations in a corpus: selection of collocations by frequency and  selection based on mean and variance of the distance between focal word and collocating word among others.
+
+#### Extracting the Features (Cont.)
+Here we calculated collocations using the Jaccard Index.  The corpus of reviews was broken up into 'key bigrams'. The frequency of the key bigram frequency was counted and then divided by the sum of frequencies with which any bigram contained a term in the bigram of the 'key bigram'.  
+
+An illustrative example.  "The dance revolution must continue.  You can dance if you want to.  But dance revolution is the wave of the future."  Here "dance revolution" is one of many 'key bigrams' extracted from this corpus containing three sentences.  'dance revolution' has a frequency of 2.  The sum of frequencies of the bigrams in this corpus that contain a word from this 'key bigram' is 8 (it includes for example, 'the dance', 'dance revolution', and 'revolution must', but not 'must continue' which contains neither 'dance' or 'revolution'). The jaccard index for this 'key bigram' would then be 1/4.  
+
+Other scoring methods to find collocations include Dice's coefficient and the likelihood ratio.  See Foundations of Statistical Natural Language Processing by Manning and Schuetze for more.
+
+NLTK has an implementation of collocations which was used for this project.
+
+#### Creating Sentiment Scores For Each Feature per Product
+
 
 #### Necessary Python Packages ####
 1. cPickle
