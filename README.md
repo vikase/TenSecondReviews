@@ -16,7 +16,7 @@ Investigating further I noticed that these "suggested improvements" were often r
 
 Was it possible to extract the attribute (remote control, battery life) and also discover the way consumers felt about these particular attributes?  
 
-And if it was possible, could I then quickly compare that product's attributes with other product's in it's category?
+And if it was possible, could I then quickly compare that product's attributes with other products in it's category?
 
 
 #### Data
