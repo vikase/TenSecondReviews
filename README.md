@@ -29,7 +29,7 @@ Each category (cameras, laptops, phones, etc.) has a collection of json files, a
 
 Looking at the camera category specifically, there were initially 3007 unique products.  This was refined down to 1108 products which had more than 100 reviews each for a total of 322,035 camera reviews analyzed (an average of 300 reviews per product.
 
-#### Overview
+#### Methodology:
 The main steps were organizing the data, extracting the relevant features, and then creating sentiment scores for each of the features per product.
 
 #### Organizing the Data
@@ -54,11 +54,6 @@ Other scoring methods to find collocations include Dice's coefficient and the li
 
 NLTK has an implementation of collocations which was used for this project.
 
-####Collocations in this Amazon camera dataset
-
-The features extracted with this method included [low light; memory card; picture quality; battery life; image quality; highly recommend; wide angle; shutter speed; takes great; optical zoom; great pictures; lcd screen; image stabilization; digital camera; touch screen; much better; would recommend; year old].  
-
-Not all of these features that we would like to actually rank our products upon.  Certainly not on "highly recommend" or "much better".  Initially the process to eliminate these, for the purposes of this proof of concept, was manual.
 
 #### Creating Sentiment Scores For Each Feature per Product
 
@@ -71,18 +66,46 @@ This is admittedly a brute force technique.  There will be instances where withi
 
 Moreover, we adjusted the score to account for products which simply had more reviews (and therefore if there was a bias found in reviewers across reviewers ie. reviewers tend to be leave positive reviews when they leave reviews) 
 
-#### Conclusions and Results
+#### Conclusions and Results:
+
+#### Collocations in this Amazon camera dataset
+
+The features extracted with this method included [low light; memory card; picture quality; battery life; image quality; highly recommend; wide angle; shutter speed; takes great; optical zoom; great pictures; lcd screen; image stabilization; digital camera; touch screen; much better; would recommend; year old].  
+
+Not all of these features that we would like to actually rank our products upon.  Certainly not on "highly recommend" or "much better" and we would only want to include one of "image quality" and "picture quality".  Initially the process to eliminate these, for the purposes of this proof of concept, was manual.
+
+#### Sentiment Analysis
+
+Let's look at one particular example of the results for the aspect 'battery life'.  The highest score was 1.6875 for the Fujifilm FinePix J28 10.2MP Digital Camera with 3x Optical Zoom and the lowest score was -0.8 for the Kodak Easyshare C875 8 MP Digital Camera with 5xOptical Zoom. 
+
+Typical sentences describing battery life for the Fujifilm camera looked like:
+[' the camera takes very good pictures and has great battery life.', ' excellent battery life (rechargeable lithium ion).', '1) the battery life was pretty awesome.', ' that may be due to the built in liion battery pack which gives great battery life.', 'battery life seems to be great.', ' and great battery life.', ' it is very compact but the battery life on it lasts really long.', 'sd card makes it easy to transfer to computerbattery life is good and charges by plug-in.']
+
+Typical sentences describing battery life for the Kodak Easyshare looked like:
+['sole complaint is battery life', ' with same sorry results about poor battery life.', ' so you can turn the display off to preserve battery life.', '  i know that there is anissue with battery life with this camera,', '  - battery life is horrific  - seems to overcompensate the shutter speed on auto.']
+
+#### Final Thoughts
+
+Unfortunately, it is no easy to task to verify these results.  There is no professional reviewing service that actually breaks up these cameras into these constituent parts and then rates the cameras on these aspects.  
+
+However there are many ways to take this forward.  It would be possible to create an app that compares two cameras (or whatever product) based on the top five attributes of that product (discovered through the collocation technique).
+
+More useful still would be to segment the cameras  based on certain numeric specifications or price, (ex. 3x-5x Optical Zoom, 10-15MP, $200-300), and then comparing these cameras based on the sentiment-score for the attributes discovered [image quality, lcd screen, battery life, etc.].  
+
+Thank you!
 
 
-
+#### Instructions
+JSON_to_pd.py contains the manipulations to create a pandas dataframe stored in a .csv file.
+Collocations_input.py is designed to create a variable of the collocations found from the reviews for the category and feeds
+this back into ProductAnalyzer.py
+ProductAnalyzer.py creates a corpus of reviews from the csv file and does all the necessary manipulations to do keyword searches of the products as well as perform sentiment analysis on each of the features.
 
 #### Necessary Python Packages ####
 1. cPickle
-2. Flask - just for webapp
-3. Matplotlib
+2. TextBlob
+3. NLTK
 4. Numpy
 5. Pandas
-6. Plotly
-7. Scikit-Learn
-8. Scipy
-9. Werkzeug - just for webapp 
+6. StringIO
+7. SpaCy
